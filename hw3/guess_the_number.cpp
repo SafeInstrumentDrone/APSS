@@ -54,8 +54,8 @@ int main(int argc, char** argv)
             for(int i = 0; i<argc; i++){
             //1.std::string ftmp {argv[i]};
 
-            std::string ftmp;// {argv[i]};
-            ftmp = argv[i];// ошибка
+            std::string ftmp {argv[i]};
+            //ftmp = argv[i];// ошибка
             if(ftmp == "-max"){
                 MAXDIAPAZON = std::stoi(argv[i+1]);
                 continue;
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 
 	std::srand(std::time(nullptr)); // use current time as seed for random generator
 
-	const int target_value = 55;//std::rand() % MAXDIAPAZON;
+	const int target_value = std::rand() % MAXDIAPAZON; //55;
 
 
 	// Ask about name
