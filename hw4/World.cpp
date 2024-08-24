@@ -59,17 +59,35 @@ World::World(const std::string& worldFilePath) {
         // шаров как столкновение. Если true - требуется.
         // В базовой части задания этот параметр
         stream >> std::boolalpha >> isCollidable;
-
         // TODO: место для доработки.
         // Здесь не хватает самого главного - создания
         // объекта класса Ball со свойствами, прочитанными
         // выше, и его помещения в контейнер balls
+        Ball ball;
+        ball.setCenter({x,y});
+        ball.setVelocity({vx,vy});
+        ball.m_color = {red, green, blue};
+        ball.setRadius(radius);
+        ball.isCollision = isCollidable;
 
+        //if(radius>51.0){ball.isCollision=false;}
         // После того как мы каким-то образом
         // сконструируем объект Ball ball;
         // добавьте его в конец контейнера вызовом
-        // balls.push_back(ball);
+         balls.push_back(ball);
     }
+
+    for (size_t i = 0; i < 10; i++)
+    {
+        Dust dust;
+        dust.m_color = {0.1,0.1,0.1};
+        dust.isCollision = false;
+        //dust.timeLive = 10;
+        dusts.push_back(dust);
+    }
+    
+    
+
 }
 
 /// @brief Отображает состояние мира

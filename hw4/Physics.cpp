@@ -28,9 +28,8 @@ void Physics::collideBalls(std::vector<Ball>& balls) const {
             const double collisionDistance = a->getRadius() + b->getRadius();
             const double collisionDistance2 =
                 collisionDistance * collisionDistance;
-
-            if (distanceBetweenCenters2 < collisionDistance2) {
-                processCollision(*a, *b, distanceBetweenCenters2);
+                 if ((distanceBetweenCenters2 < collisionDistance2) && (a->isCollision)) {
+                     processCollision(*a, *b, distanceBetweenCenters2);
             }
         }
     }
