@@ -10,6 +10,7 @@ private:
     Velocity m_velosity;
     double m_mass;
     double m_radius;
+    int timeLive = 10;
 public:
     void setVelocity(const Velocity& velocity);
     Velocity getVelocity() const;
@@ -21,4 +22,5 @@ public:
     void setRadius(double radius); //
     bool isCollision;
     Color m_color;
+    int getTimeLive();
 };

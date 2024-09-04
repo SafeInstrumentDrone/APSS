@@ -85,3 +85,10 @@ void Ball::setRadius(double radius)  {
     m_radius = radius;
     m_mass =  3.14159 * pow(radius,3.) * 4. / 3.;
 }
+
+int Ball::getTimeLive() {
+    if (timeLive<0){
+       this -> ~Ball();
+    };
+    return --timeLive;
+}

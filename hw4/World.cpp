@@ -79,10 +79,15 @@ World::World(const std::string& worldFilePath) {
 
     for (size_t i = 0; i < 10; i++)
     {
-        Dust dust;
+        Ball dust;
+        dust.setCenter({1,1});
         dust.m_color = {0.1,0.1,0.1};
         dust.isCollision = false;
-        //dust.timeLive = 10;
+        srand (time(NULL));
+        double b = std::rand() % 360 + 1;
+        Velocity a = {1000., b}; 
+        dust.setVelocity(a);
+        //int a = dust.getTimeLive;
         dusts.push_back(dust);
     }
     
@@ -100,6 +105,11 @@ void World::show(Painter& painter) const {
     for (const Ball& ball : balls) {
         ball.draw(painter);
     }
+
+    for (const Ball& dust : dusts){   //Dust
+        dust.draw(painter);
+    }
+
 }
 
 /// @brief Обновляет состояние мира
@@ -125,4 +135,5 @@ void World::update(double time) {
     restTime = time - double(ticks) * timePerTick;
 
     physics.update(balls, ticks);
+   // physics.update(dusts, ticks);
 }

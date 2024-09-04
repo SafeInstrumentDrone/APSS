@@ -4,13 +4,13 @@
 
 int main(int argc, char* argv[]) {
 
-    if (argc < 2) {
-        std::cerr << "Please, call with one argument "
-                  << "( example: " << argv[0] << " <path to file smile.txt> )";
-        return 1;
-    }
+    // if (argc < 2) {
+    //     std::cerr << "Please, call with one argument "
+    //               << "( example: " << argv[0] << " <path to file smile.txt> )";
+    //     return 1;
+    // }
     try {
-        World w(argv[1]);
+        World w(".\\data\\smile.txt");//argv[1]);
         /**
          * Код ниже запускает выполнение приложения. Для
          * выполнения задания нет необходимости изучать
