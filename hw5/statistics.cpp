@@ -1,13 +1,15 @@
 #include <iostream>
 #include <limits>
 #include <vector>
+#include <cmath>
 
 class IStatistics {
 public:
 	virtual ~IStatistics() {}
 
-	virtual void update(double next) = 0;
-	virtual double eval() const = 0;
+	//template <typename T>
+	virtual void update(double next) = 0; //double
+	virtual double eval() const = 0;  //double
 	virtual const char * name() const = 0;
 };
 

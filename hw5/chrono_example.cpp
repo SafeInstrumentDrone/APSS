@@ -4,6 +4,7 @@
 
 #include <algorithm> // std::shuffle
 #include <random>	 // std::default_random_engine
+#include "statistics.hpp"
 
 void fill_vector(std::vector<int> &values, size_t count) {
 	values.resize(count);
@@ -24,6 +25,15 @@ void make_random_shuffle(std::vector<T> &values) {
 }
 
 void run_test_suite(size_t iteration_count) {
+
+	const size_t statistics_count = 4;
+	IStatistics *statistics[statistics_count];
+
+	statistics[0] = new Min{};
+	statistics[1] = new Max{};
+	statistics[2] = new Mean{};
+	statistics[3] = new Std{};
+
 	const size_t elements_count = 100000;
 	std::vector<int> values;
 	// fill values with elements_count elements
@@ -35,28 +45,40 @@ void run_test_suite(size_t iteration_count) {
 	std::cout << "iteration_count = " << iteration_count << std::endl;
 	// std::sort algorithm measuring
 	{
-		// Take a start time
-		auto start_time = std::chrono::system_clock::now();
+		
 		// Make a several iterations
 		for (size_t i = 0; i < iteration_count; ++i) {
 			std::vector<int> test_data = values;
+			// Take a start time
+			auto start_time = std::chrono::system_clock::now();
 			std::sort(test_data.begin(), test_data.end());
+			// Take an end time
+			auto end_time = std::chrono::system_clock::now();
+			auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);// Calculate a duration
+			for (size_t i = 0; i < statistics_count; ++i) {
+				statistics[i]->update((double)milliseconds.count());
+			}
+
 		}
-		// Take an end time
-		auto end_time = std::chrono::system_clock::now();
-		// Calculate a duration
-		auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
-			end_time - start_time);
-		std::cout << "std::sort duration = " << milliseconds.count() << "ms" << std::endl;
-		std::cout << "std::sort avg = " << milliseconds.count() / iteration_count << "ms" << std::endl;
+		
+	// Print results if any
+	std::cout << "std::sort statistics" << std::endl;
+	for (size_t i = 0; i < statistics_count; ++i) {
+		std::cout << statistics[i]->name() << " = " << statistics[i]->eval() << std::endl;
+		statistics[i]->clear(); //clear for next usage
+	}
+
+		//std::cout << "std::sort duration = " << milliseconds.count() << "ms" << std::endl;
+		//std::cout << "std::sort avg = " << milliseconds.count() / iteration_count << "ms" << std::endl;
 	}
 
 	// C-style quick-sort algorithm measuring
 	{
-		// Take a start time
-		auto start_time = std::chrono::system_clock::now();
 		// Make a several iterations
 		for (size_t i = 0; i < iteration_count; ++i) {
+			// Take a start time
+			auto start_time = std::chrono::system_clock::now();
+
 			std::vector<int> test_data = values;
 			std::qsort(
 				test_data.data(),
@@ -71,15 +93,30 @@ void run_test_suite(size_t iteration_count) {
 						return 1;
 					return 0;
 				});
+			// Take an end time
+			auto end_time = std::chrono::system_clock::now();
+			// Calculate a duration
+			auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+			for (size_t i = 0; i < statistics_count; ++i) {
+				statistics[i]->update((double)milliseconds.count());
+			}
 		}
-		// Take an end time
-		auto end_time = std::chrono::system_clock::now();
-		// Calculate a duration
-		auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
-			end_time - start_time);
-		std::cout << "qsort duration = " << milliseconds.count() << "ms" << std::endl;
-		std::cout << "qsort avg = " << milliseconds.count() / iteration_count << "ms" << std::endl;
+		//std::cout << "qsort duration = " << milliseconds.count() << "ms" << std::endl;
+		//std::cout << "qsort avg = " << milliseconds.count() / iteration_count << "ms" << std::endl;
+
+		// Print results if any
+		std::cout << "std::qsort statistics" << std::endl;
+		for (size_t i = 0; i < statistics_count; ++i) {
+			std::cout << statistics[i]->name() << " = " << statistics[i]->eval() << std::endl;
+		}
 	}
+
+	// Clear memory - delete all objects created by new
+	for (size_t i = 0; i < statistics_count; ++i) {
+		delete statistics[i];
+	}
+
+
 }
 
 int main() {
