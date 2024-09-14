@@ -44,7 +44,7 @@ private:
 
 class Max : public IStatistics {
 public:
-	Max() : m_max{std::numeric_limits<double>::min()} {
+	Max() : m_max{-std::numeric_limits<double>::max()} {
 	}
 
 	void update(double next) override {
@@ -54,7 +54,7 @@ public:
 	}
 
 	void clear() override {
-		m_max = std::numeric_limits<double>::min();
+		m_max = -std::numeric_limits<double>::max();
 	}
 
 	double eval() const override {

@@ -38,7 +38,7 @@ private:
 
 class Max : public IStatistics {
 public:
-	Max() : m_max{std::numeric_limits<double>::min()} {
+	Max() : m_max{-std::numeric_limits<double>::max()} {
 	}
 
 	void update(double next) override {
@@ -115,12 +115,14 @@ private:
 int main() {
 
 	const size_t statistics_count = 4;
-	IStatistics *statistics[statistics_count];
 
-	statistics[0] = new Min{};
-	statistics[1] = new Max{};
-	statistics[2] = new Mean{};
-	statistics[3] = new Std{};
+	IStatistics *statistics[statistics_count] = {new Min(), new Max(), new Mean(), new Std()};
+	// IStatistics *statistics[statistics_count];
+    
+	// statistics[0] = new Min{};
+	// statistics[1] = new Max{};
+	// statistics[2] = new Mean{};
+	// statistics[3] = new Std{};
 
 	double val = 0;
 	while (std::cin >> val) {
