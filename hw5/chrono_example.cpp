@@ -27,12 +27,14 @@ void make_random_shuffle(std::vector<T> &values) {
 void run_test_suite(size_t iteration_count) {
 
 	const size_t statistics_count = 4;
-	IStatistics *statistics[statistics_count];
 
-	statistics[0] = new Min{};
-	statistics[1] = new Max{};
-	statistics[2] = new Mean{};
-	statistics[3] = new Std{};
+	IStatistics *statistics[statistics_count] = {new Min(), new Max(), new Mean(), new Std()};
+	// IStatistics *statistics[statistics_count];
+
+	// statistics[0] = new Min{};
+	// statistics[1] = new Max{};
+	// statistics[2] = new Mean{};
+	// statistics[3] = new Std{};
 
 	const size_t elements_count = 100000;
 	std::vector<int> values;
