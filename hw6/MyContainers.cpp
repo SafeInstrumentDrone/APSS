@@ -18,12 +18,12 @@ class MyContVec {
 
         void push_back (T v) {
             int new_size = length + 1;
-            T* new_region = new T [new_size];
+            T* new_region = ::operator new T [new_size];
             for(size_t i = 0; i < length; ++i){
                 new_region[i] = values[i];
             };
 
-            new_region[length] = v;
+            new_region[length] = std::move(v);
 
             delete [] values;
             values = new_region;
@@ -40,13 +40,14 @@ class MyContVec {
 
     private:
         int length = 0;
+        int capacity = 0;
         T* values = nullptr;    
 
 };
 
 
 
- int main(){
+ int main(int argc, char* argv[]){
         //49:00 / 1:25:15
 
     return 0;
