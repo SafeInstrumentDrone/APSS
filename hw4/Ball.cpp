@@ -86,7 +86,7 @@ void Ball::setRadius(double radius)  {
     m_mass =  3.14159 * pow(radius,3.) * 4. / 3.;
 }
 
-int Ball::getTimeLive() {
+int Ball::DeathKlockTick() {
     if (timeLive<0){
        this -> ~Ball();
     };

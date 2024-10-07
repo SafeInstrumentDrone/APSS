@@ -22,5 +22,5 @@ public:
     void setRadius(double radius); //
     bool isCollision;
     Color m_color;
-    int getTimeLive();
+    int DeathKlockTick();
 };

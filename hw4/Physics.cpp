@@ -11,16 +11,16 @@ void Physics::setWorldBox(const Point& topLeft, const Point& bottomRight) {
     this->bottomRight = bottomRight;
 }
 
-void Physics::update(std::vector<Ball>& balls, const size_t ticks) const {
-
+void Physics::update(std::vector<Ball>& balls, const size_t ticks, PointCollision &p) const {
+    //return false;
     for (size_t i = 0; i < ticks; ++i) {
         move(balls);
         collideWithBox(balls);
-        collideBalls(balls);
+        collideBalls(balls, p);
     }
 }
 
-void Physics::collideBalls(std::vector<Ball>& balls) const {
+void Physics::collideBalls(std::vector<Ball>& balls, PointCollision &p) const {   
     for (auto a = balls.begin(); a != balls.end(); ++a) {
         for (auto b = std::next(a); b != balls.end(); ++b) {
             const double distanceBetweenCenters2 =
@@ -30,9 +30,14 @@ void Physics::collideBalls(std::vector<Ball>& balls) const {
                 collisionDistance * collisionDistance;
                  if ((distanceBetweenCenters2 < collisionDistance2) && (a->isCollision)) {
                      processCollision(*a, *b, distanceBetweenCenters2);
-            }
+                p.x = a->getCenter().x;
+                p.y = a->getCenter().y;
+                p.isCollision = true;
+                //return true;
+            }//else p.isCollision = false;
         }
     }
+    //return false;
 }
 
 void Physics::collideWithBox(std::vector<Ball>& balls) const {

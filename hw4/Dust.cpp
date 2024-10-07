@@ -13,7 +13,7 @@
 // }
 
 
-int Dust::getTimeLive() {
+int Dust::DeathKlockTick() {
     if (timeLive<0){
        this -> ~Dust();
     };

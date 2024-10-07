@@ -6,11 +6,40 @@
 // Подробнее см. update()
 // Изменять не следует
 static constexpr double timePerTick = 0.001;
+// Количество пылинок
+static constexpr int dustCount = 100;
 
 /**
  * Конструирует объект мира для симуляции
  * @param worldFilePath путь к файлу модели мира
  */
+    std::istream& operator>>(std::istream& stream, Point& variable) {
+        //  double x;
+        //  double y;
+        stream >> variable.x >> variable.y;
+        // variable.x = x;
+        // variable.y = y;      
+        return stream;  
+    };
+
+    std::istream& operator>>(std::istream& stream, Velocity& variable) {
+        double vx;
+        double vy;        
+        stream >> vx >> vy;
+        variable.setVector({vx,vy});
+        return stream;
+    };
+
+    std::istream& operator>>(std::istream& stream, Color& variable) {
+        double red;
+        double green;
+        double blue;
+        stream >> red >> green >> blue;
+        variable = {red, green, blue};    //(red,green,blue);
+        return stream;
+    };
+
+
 World::World(const std::string& worldFilePath) {
 
     std::ifstream stream(worldFilePath);
@@ -32,15 +61,22 @@ World::World(const std::string& worldFilePath) {
      * как и (red, green, blue). Опять же, можно упростить
      * этот код, научившись читать сразу Point, Color...
      */
-    double x;
-    double y;
-    double vx;
-    double vy;
+
+
+    // double x;
+    // double y;
+    Point p;
+
+    // double vx;
+    // double vy;
+    Velocity v;
+
     double radius;
 
-    double red;
-    double green;
-    double blue;
+    // double red;
+    // double green;
+    // double blue;
+    Color c;
 
     bool isCollidable;
 
@@ -49,9 +85,13 @@ World::World(const std::string& worldFilePath) {
     while (stream.peek(), stream.good()) {
         // Читаем координаты центра шара (x, y) и вектор
         // его скорости (vx, vy)
-        stream >> x >> y >> vx >> vy;
+        //stream >> x >> y >> vx >> vy;
+        stream >> p; 
+        //stream >> vx >> vy;
+        stream >> v;
         // Читаем три составляющие цвета шара
-        stream >> red >> green >> blue;
+        //stream >> red >> green >> blue;
+        stream >> c;
         // Читаем радиус шара
         stream >> radius;
         // Читаем свойство шара isCollidable, которое
@@ -64,9 +104,9 @@ World::World(const std::string& worldFilePath) {
         // объекта класса Ball со свойствами, прочитанными
         // выше, и его помещения в контейнер balls
         Ball ball;
-        ball.setCenter({x,y});
-        ball.setVelocity({vx,vy});
-        ball.m_color = {red, green, blue};
+        ball.setCenter(p);//{x,y});
+        ball.setVelocity(v);//{vx,vy});//v
+        ball.m_color = c;//{red, green, blue};
         ball.setRadius(radius);
         ball.isCollision = isCollidable;
 
@@ -77,16 +117,17 @@ World::World(const std::string& worldFilePath) {
          balls.push_back(ball);
     }
 
-    for (size_t i = 0; i < 10; i++)
+    srand (time(NULL));
+    for (size_t i = 0; i < dustCount; i++)
     {
         Ball dust;
-        dust.setCenter({1,1});
+        //dust.setCenter({2400,1500});
         dust.m_color = {0.1,0.1,0.1};
-        dust.isCollision = false;
-        srand (time(NULL));
-        double b = std::rand() % 360 + 1;
-        Velocity a = {1000., b}; 
-        dust.setVelocity(a);
+        dust.isCollision = false;        
+        //double b = std::rand() % 360 + 1;
+        //Velocity a = {1000., std::rand() % 360 + 1}; 
+        //dust.setVelocity({1000., std::rand() % 360 + 1});
+        dust.setRadius(10);
         //int a = dust.getTimeLive;
         dusts.push_back(dust);
     }
@@ -134,6 +175,19 @@ void World::update(double time) {
     const auto ticks = static_cast<size_t>(std::floor(time / timePerTick));
     restTime = time - double(ticks) * timePerTick;
 
-    physics.update(balls, ticks);
-   // physics.update(dusts, ticks);
+    
+    physics.update(balls, ticks, collision);
+
+    if(collision.isCollision){
+         for (size_t i = 0; i < dustCount; i++){
+             //double x = std::rand() % 2400 + 1;
+             //double y = std::rand() % 1500 + 1;
+               dusts[i].setCenter({collision.x,collision.y});  
+               dusts[i].setVelocity({std::rand() % 3000 + 1, std::rand() % 360 + 1});
+            } 
+         collision.isCollision = false;   
+    }
+
+    physics.update(dusts, ticks, collision);
+    
 }

@@ -10,7 +10,8 @@ int main(int argc, char* argv[]) {
     //     return 1;
     // }
     try {
-        World w(".\\data\\smile.txt");//argv[1]);
+        //argv[1] = ".\\data\\smile.txt";//
+        World w("e:\\repo\\hw4\\data\\smile.txt");//argv[1]);
         /**
          * Код ниже запускает выполнение приложения. Для
          * выполнения задания нет необходимости изучать

@@ -8,5 +8,5 @@ class Dust : public Ball{
 private:
     int timeLive = 10;
 public:
-    int getTimeLive();
+    int DeathKlockTick();
 };

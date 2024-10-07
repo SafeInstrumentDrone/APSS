@@ -9,6 +9,18 @@ class Point {
     double y{};
 };
 
+class PointCollision: public Point{
+public:
+    PointCollision() = default;
+    inline PointCollision(bool isCollision) : isCollision{isCollision} {};
+    bool isCollision{};
+};
+
+
+// inline Point operator==(const Point& lhs, const Point& rhs) {
+//     return {(lhs.x == rhs.x) && (lhs.y == rhs.y)};
+// }
+
 inline Point operator-(const Point& lhs, const Point& rhs) {
     return {lhs.x - rhs.x, lhs.y - rhs.y};
 }
@@ -29,3 +41,5 @@ inline double distance2(const Point& lhs, const Point& rhs) {
     const Point delta = lhs - rhs;
     return delta.x * delta.x + delta.y * delta.y;
 }
+
+
