@@ -12,49 +12,39 @@ class MyContVec {
             values [0] = v;
         };
 
-        ~MyContVec () {delete [] values; };
+        ~MyContVec () {
+            delete [] values; 
+        };
 
         int size () {
-           // length = sizeof(values) / sizeof(T);
             return length;
         };
 
         void push_back (T v) {
-            //int new_size = length + 1;
-            T* new_region = /*::operator*/ new T [length + 1/*new_size*/];
+            T* new_region = new T [length + 1];
             for(size_t i = 0; i < length; ++i){
                 new_region[i] = values[i];
             };
-
             new_region[length] = std::move(v);
-
             delete [] values;
             values = new_region;
             length += 1;
-            // !!! delete[] new_region;
         };
 
-        void erase (/*T v,*/ int del) {
-            //int new_size = length + 1;            
-            /*decltype(values)*/T* new_region = /*::operator*/ new /*decltype(values)*/ T [length - 1/*new_size*/];
+        void erase (int del) {            
+            T* new_region = new T [length - 1];
             int k = 0;
             for(size_t i = 0; i < length; ++i){
                 if(i == del-1) k = 1;                   
                 new_region[i] = values[i + k];
             };
-
-            //new_region[length] = std::move(v);
-
             delete [] values;
             values = new_region;
             length -= 1;
-            // !!! delete[] new_region;
         };
 
-
         void insert (T v, int pos) {
-            //int new_size = length + 1;
-            T* new_region = /*::operator*/ new T [length + 1/*new_size*/];
+            T* new_region =  new T [length + 1];
             int k = 0;
             for(size_t i = 0; i < length; ++i){
                 if(i == pos) k = 1;
@@ -66,14 +56,9 @@ class MyContVec {
             delete [] values;
             values = new_region;
             length += 1;
-            // !!! delete[] new_region;
         };
 
         void printValue() {
-            //auto a = sizeof(values);
-            //auto b = sizeof(T);
-
-            //length = a; /// b;
             for(size_t i = 0; i < length; ++i){
                 std::cout << values[i] << std::endl;
             }
@@ -86,186 +71,179 @@ class MyContVec {
     private:
         int length = 0;
         int capacity = 0;
-        T* values = nullptr;    
-
+        T* values = nullptr;  
 };
 
-template <typename T>
-struct Node{
-    Node* next;
-    Node* prev;
-    T data;
-}; 
+// template <typename T>
+// struct Node{
+//     Node* next;
+//     Node* prev;
+//     T data;
+// }; 
 
 template <typename T>
 class MyContList {
     public:
         MyContList () {};
         MyContList (T v) {
-            node->prev = nullptr;
-            node->next = nullptr;
-            node->data = v;
+            m_first->prev = nullptr;
+            m_first->next = nullptr;
+            m_first->data = v;
          };
 
-        ~MyContList () {/*delete [] values;*/ 
-            for(int i = m_size; i < 0; i--){
-                Node<T> * tmp = node->prev;
-                delete m_last;
-                m_last = tmp;
+        ~MyContList () {
+            while(m_first){
+                delete std::exchange(m_first, m_first->next);
             }
         };
 
         int size () {
-           // length = sizeof(values) / sizeof(T);
             return m_size;
         };
 
         void push_back (T v) {
-            Node<T>* new_node = new Node<T>{};
+            Node* new_node = new Node{};
 
-            m_last->next = new_node;
-
-            new_node->prev = m_last;
-            new_node->next = nullptr;
-            new_node->data = v;            
-            m_last = new_node;
-            m_size += 1;
-
-            // //int new_size = length + 1;
-            // T* new_region = /*::operator*/ new T [length + 1/*new_size*/];
-            // for(size_t i = 0; i < length; ++i){
-            //     new_region[i] = values[i];
-            // };
-
-            // new_region[length] = std::move(v);
-
-            // delete [] values;
-            // values = new_region;
-            // length += 1;
-            // // !!! delete[] new_region;
+            if(m_size > 0){
+                m_last->next = new_node;
+                new_node->prev = m_last;
+                new_node->next = nullptr;
+                new_node->data = v;            
+                m_last = new_node;                
+            }else{                 
+                m_first = new_node;
+                m_last = new_node;
+                m_first->data = v;
+                m_last->data = v;          
+            }
+            m_size += 1;    
         };
 
-        void erase (/*T v,*/ int del) {
-            Node<T> * tmp = m_last;
+        void erase (int del) {
+            Node* tmp = m_last;  //тут бы проверку - к концу или началу ближе индекс...
             for(int i = m_size; i > 0; i--){
                 if(i == del){   
-                    auto a = tmp->next->prev;
-                    auto b = tmp->prev->next;
-                    tmp->prev->next = a;
-                    tmp->next->prev = b;
+                    tmp->next->prev = tmp->prev;
+                    tmp->prev->next = tmp->next;
                     delete tmp;
-                    //m_last = tmp;
-                    continue;
+                    m_size--;
+                    break;
                 }
                 else{
-                    tmp = tmp->prev;
+                    //tmp = tmp->prev;
+                    std::exchange(tmp, tmp->prev);
                 }
             }
         };
 
-
         void insert (T v, int pos) {
-            // //int new_size = length + 1;
-            // T* new_region = /*::operator*/ new T [length + 1/*new_size*/];
-            // int k = 0;
-            // for(size_t i = 0; i < length; ++i){
-            //     if(i == pos) k = 1;
-            //     new_region[i+k] = values[i];
-            // };
+            if(pos>=m_size){//  багофича: здесь, если прилетела вставка больше наличия - просто пушбачим в конец
+                push_back(v);
+                return;
+            };
 
-            // new_region[pos] = std::move(v);
-
-            // delete [] values;
-            // values = new_region;
-            // length += 1;
-            // // !!! delete[] new_region;
+            Node* new_node = new Node{};
+            new_node->data = v;
+            Node* tmp = m_first; //тут бы проверку - к началу или концу ближе индекс...
+            for(int i=0; i < pos; ++i){                
+                std::exchange(tmp, tmp->next);
+            };
+            if(!(tmp->prev == nullptr)){ //если вставка в начало
+                new_node->prev = tmp->prev;
+                tmp->prev->next = new_node;
+            }else 
+                m_first = new_node;
+                
+            new_node->next = tmp;                
+            tmp->prev = new_node;
+            
+            m_size++;
         };
 
         void printValue() {
-            // //auto a = sizeof(values);
-            // //auto b = sizeof(T);
-
-            // //length = a; /// b;
-            // for(size_t i = 0; i < length; ++i){
-            //     std::cout << values[i] << std::endl;
-            // }
+            Node* tmp = m_first;
+            while (tmp){                
+                std::cout << tmp->data << std::endl; 
+                std::exchange(tmp, tmp->next);
+            }
         };
 
-        T operator[] (int i) {
-             return node->data;
+        T operator[] (int pos) {
+            Node* tmp = m_first; //тут бы проверку - к началу или концу ближе индекс...
+            for(int i=0; i < pos; ++i){                
+                std::exchange(tmp, tmp->next);
+            };
+            return tmp->data;
         }        
 
     private:
-        // struct Node{
-        //     Node* next;
-        //     Node* prev;
-        //     T data;
-        // }; 
+        struct Node{
+            Node* next;
+            Node* prev;
+            T data;
+        }; 
 
         int m_size = 0;
-        Node<T>* node = nullptr;   
-        Node<T>* m_last = nullptr;
+        Node* m_first = nullptr;   
+        Node* m_last = nullptr;
 };
 
 
  int main(int argc, char* argv[]){
-
-       { 
-        MyContVec<int> values;
+        
+        MyContVec<int> valuesV;
         for(int i = 0; i < 10; i++)
-            values.push_back((float)i);
-        //values.push_back(188);
-
-        values.printValue();
-        std::cout << "erase" << '\n';
-
+            valuesV.push_back(i);
         
-        values.erase(7);
-        values.erase(5);
-        values.erase(3);
-        values.printValue();
-        std::cout << "insert" << '\n';
+        std::cout << "sizeVec=" << valuesV.size() << std::endl;
+        valuesV.printValue();
 
-        values.insert(10,0);//values.insert(11,1);
-        values.insert(20,values.size() / 2);
-        values.insert(30,values.size());
-        values.printValue();
-
-        std::cout << "[]" << '\n';
-        std::cout << values[4] << '\n';
-
-        // std::vector<int> a;
-        // a.push_back(1);
-        // a.push_back(4);
-        // a.push_back(8);
-        // print_container(a);
-        // a.erase(a.begin(), a.end()-1);
-        // print_container(a);
-        }
-
-        {
-        MyContList<int> values;
-        for(int i = 1; i <= 10; i++)
-            values.push_back((float)i);
-        //values.push_back(188);
-
-        values.printValue();
-        std::cout << "erase" << '\n';
-
+        std::cout << "eraseVec" << std::endl;   
+        valuesV.erase(7);
+        valuesV.erase(5);
+        valuesV.erase(3);                     
+        valuesV.printValue();
         
-        values.erase(7);
-        values.erase(5);
-        values.erase(3);
-        values.printValue();
-        std::cout << "insert" << '\n';
+        std::cout << "insertVec first" << std::endl;
+        valuesV.insert(10,0);
+        valuesV.printValue();
 
-        values.insert(10,0);//values.insert(11,1);
-        values.insert(20,values.size() / 2);
-        values.insert(30,values.size());
-        values.printValue();
+        std::cout << "insertVec middle" << std::endl;
+        valuesV.insert(20,valuesV.size() / 2);
+        valuesV.printValue();
 
-        std::cout << "[]" << '\n';
-        std::cout << values[4] << '\n';
-        }
+        std::cout << "insertVec last" << std::endl; 
+        valuesV.insert(30,valuesV.size());
+        valuesV.printValue();
+
+        std::cout << "Vec[4]=" << valuesV[4] << std::endl;
+
+        MyContList<int> valuesL;
+        for(int i = 0; i < 10; i++)
+            valuesL.push_back(i);
+
+        std::cout << "sizeList=" << valuesL.size() << std::endl;
+        valuesL.printValue();
+
+        std::cout << "eraseList" << std::endl;        
+        valuesL.erase(7);
+        valuesL.erase(5);
+        valuesL.erase(3);
+        valuesL.printValue();
+
+        std::cout << "insertList first" << std::endl;
+        valuesL.insert(10,0);
+        valuesL.printValue(); 
+
+        std::cout << "insertList middle"<< std::endl;
+        valuesL.insert(20,valuesL.size() / 2);
+        valuesL.printValue();
+
+        std::cout << "insertList end"<< std::endl;
+        valuesL.insert(30,valuesL.size());
+        valuesL.printValue();
+
+        std::cout << "List[4]=" <<valuesL[4] << std::endl;
+        
     return 0;
 }
